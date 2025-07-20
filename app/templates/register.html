@@ -1,0 +1,54 @@
+<!-- D:\jkt48-nft-wallet\app\templates\register.html -->
+<!-- Halaman ini berisi formulir untuk registrasi pengguna baru. -->
+{% extends "base.html" %}
+
+<!-- Mengatur judul spesifik untuk halaman registrasi. -->
+{% block title %}Register - JKT48 NFT Ticketing{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen pt-12 pb-12">
+    <!-- Kontainer form dengan efek blur pada background. -->
+    <div class="w-full max-w-md p-8 space-y-6 bg-white/10 backdrop-blur-lg rounded-xl shadow-lg">
+        <h2 class="text-3xl font-bold text-center text-white">Buat Akun Baru</h2>
+        <p class="text-center text-gray-300">Daftar dan dapatkan Wallet NFT (JKT48 koin) Anda secara otomatis!</p>
+        
+        <!-- Formulir registrasi. Action mengarah ke rute 'auth.register'. -->
+        <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-6">
+            <!-- CSRF Protection (jika menggunakan Flask-WTF, namun baik untuk disertakan sebagai placeholder). -->
+            {{ form.hidden_tag() if form }} 
+            
+            <!-- Input untuk Username -->
+            <div>
+                <label for="username" class="block mb-2 text-sm font-medium text-gray-200">Username</label>
+                <input type="text" name="username" id="username" class="w-full px-4 py-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder="Username unik Anda" required>
+            </div>
+            
+            <!-- Input untuk Email -->
+            <div>
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-200">Email</label>
+                <input type="email" name="email" id="email" class="w-full px-4 py-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder="nama@contoh.com" required>
+            </div>
+            
+            <!-- Input untuk Password -->
+            <div>
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-200">Password</label>
+                <input type="password" name="password" id="password" placeholder="••••••••" class="w-full px-4 py-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+            </div>
+            
+            <!-- Input untuk Konfirmasi Password -->
+            <div>
+                <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-200">Konfirmasi Password</label>
+                <input type="password" name="confirm_password" id="confirm_password" placeholder="••••••••" class="w-full px-4 py-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+            </div>
+            
+            <!-- Tombol Submit -->
+            <button type="submit" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-pink-500 rounded-lg hover:bg-pink-600 focus:ring-4 focus:ring-pink-300">Register</button>
+            
+            <!-- Link untuk ke halaman Login jika sudah punya akun -->
+            <div class="text-sm font-medium text-center text-gray-300">
+                Sudah punya akun? <a href="{{ url_for('auth.login') }}" class="text-pink-400 hover:underline">Login disini</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

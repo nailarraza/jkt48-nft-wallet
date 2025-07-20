@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+<!-- Mengatur judul spesifik untuk halaman ini. -->
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold text-white text-center mb-8">Admin Dashboard</h1>
+    <p class="text-center text-gray-300 mb-12">Kelola event, lihat statistik, dan lakukan verifikasi check-in pengunjung dari sini.</p>
+    
+    <!-- Quick Access Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <!-- Event Manager Card -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 hover:bg-white/20 transition-all">
+            <h2 class="text-2xl font-bold text-pink-400">Manajemen Event</h2>
+            <p class="text-gray-300 mt-2">Tambah, edit, atau hapus event yang akan datang. Atur detail, harga, dan kuota tiket.</p>
+            <a href="#event-management" class="inline-block mt-4 bg-pink-500 text-white font-bold py-2 px-4 rounded hover:bg-pink-600">Kelola Event</a>
+        </div>
+
+        <!-- Statistics Card -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 hover:bg-white/20 transition-all">
+            <h2 class="text-2xl font-bold text-cyan-400">Statistika Penjualan</h2>
+            <p class="text-gray-300 mt-2">Lihat laporan penjualan tiket, pendapatan, dan data analitik lainnya secara real-time.</p>
+            <a href="#statistics" class="inline-block mt-4 bg-cyan-500 text-white font-bold py-2 px-4 rounded hover:bg-cyan-600">Lihat Statistik</a>
+        </div>
+
+        <!-- Check-in Tool Card -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 hover:bg-white/20 transition-all">
+            <h2 class="text-2xl font-bold text-green-400">Verifikasi Check-in</h2>
+            <p class="text-gray-300 mt-2">Pindai atau masukkan kode tiket untuk melakukan verifikasi dan check-in pengunjung di lokasi event.</p>
+            <a href="{{ url_for('admin.verify_ticket') }}" class="inline-block mt-4 bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600">Mulai Verifikasi</a>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div id="statistics" class="mb-16 scroll-mt-24">
+        <h2 class="text-3xl font-bold text-white mb-6">Statistika</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Users -->
+            <div class="bg-gray-800/50 p-6 rounded-lg">
+                <h3 class="text-gray-400 text-sm font-medium">Pengguna Terdaftar</h3>
+                <p class="text-3xl font-bold text-white mt-1">{{ stats.total_users }}</p>
+            </div>
+            <!-- Total Events -->
+            <div class="bg-gray-800/50 p-6 rounded-lg">
+                <h3 class="text-gray-400 text-sm font-medium">Total Event</h3>
+                <p class="text-3xl font-bold text-white mt-1">{{ stats.total_events }}</p>
+            </div>
+            <!-- Total Tickets Sold -->
+            <div class="bg-gray-800/50 p-6 rounded-lg">
+                <h3 class="text-gray-400 text-sm font-medium">Tiket Terjual</h3>
+                <p class="text-3xl font-bold text-white mt-1">{{ stats.total_tickets_sold }}</p>
+            </div>
+            <!-- Total Revenue -->
+            <div class="bg-gray-800/50 p-6 rounded-lg">
+                <h3 class="text-gray-400 text-sm font-medium">Total Pendapatan</h3>
+                <p class="text-3xl font-bold text-white mt-1">{{ "{:,.0f}".format(stats.total_revenue) }} Koin</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Management Section -->
+    <div id="event-management" class="scroll-mt-24">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-white">Manajemen Event</h2>
+            <a href="{{ url_for('admin.add_event') }}" class="bg-pink-500 text-white font-bold py-2 px-4 rounded hover:bg-pink-600 transition-all">
+                + Tambah Event Baru
+            </a>
+        </div>
+        
+        <div class="bg-gray-800/50 rounded-lg shadow-lg overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-300">
+                <thead class="text-xs text-white uppercase bg-gray-700/50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Nama Event</th>
+                        <th scope="col" class="px-6 py-3">Tanggal</th>
+                        <th scope="col" class="px-6 py-3">Harga (Koin)</th>
+                        <th scope="col" class="px-6 py-3">Tiket Tersedia</th>
+                        <th scope="col" class="px-6 py-3 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr class="border-b border-gray-700 hover:bg-gray-700/50">
+                        <th scope="row" class="px-6 py-4 font-medium text-white whitespace-nowrap">{{ event.name }}</th>
+                        <td class="px-6 py-4">{{ event.date.strftime('%d %b %Y, %H:%M') }}</td>
+                        <td class="px-6 py-4">{{ event.price_range }}</td>
+                        <td class="px-6 py-4">{{ event.total_tickets_available }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex justify-center items-center space-x-2">
+                                <a href="{{ url_for('admin.edit_event', event_id=event.id) }}" class="font-medium text-blue-400 hover:underline">Edit</a>
+                                <form action="{{ url_for('admin.delete_event', event_id=event.id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus event ini? Tindakan ini tidak dapat dibatalkan.');">
+                                    <button type="submit" class="font-medium text-red-400 hover:underline">Hapus</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-8">Belum ada event yang dibuat.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

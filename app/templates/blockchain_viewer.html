@@ -1,0 +1,66 @@
+<!-- D:\jkt48-nft-wallet\app\templates\blockchain_viewer.html -->
+<!-- Halaman ini berfungsi sebagai "Blockchain Explorer" sederhana, memvisualisasikan isi dari rantai blok. -->
+{% extends "base.html" %}
+
+<!-- Mengatur judul spesifik untuk halaman ini. -->
+{% block title %}Blockchain Explorer{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold text-white text-center mb-8">Blockchain Explorer</h1>
+    <p class="text-center text-gray-300 mb-12">Setiap blok di bawah ini merepresentasikan sebuah catatan permanen di dalam rantai. Blok Genesis adalah blok pertama yang dibuat.</p>
+    
+    <!-- Loop melalui setiap blok di dalam 'chain'. -->
+    <!-- `|reverse` digunakan untuk menampilkan blok terbaru (paling atas) terlebih dahulu. -->
+    <div class="space-y-8">
+        {% for block in chain|reverse %}
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 md:p-8 relative">
+            <!-- Tampilkan nomor indeks blok sebagai elemen visual. -->
+            <span class="absolute top-4 right-6 text-6xl font-black text-white/10 hidden md:block">#{{ block.index }}</span>
+            <h2 class="text-2xl font-bold text-pink-400">Blok #{{ block.index }}</h2>
+            
+            <!-- Tampilkan metadata dari blok. -->
+            <div class="mt-4 space-y-2 text-sm font-mono text-gray-300 break-all">
+                <!-- Menggunakan filter 'to_wib' yang baru untuk menampilkan waktu dalam WIB -->
+                <p><span class="font-semibold text-gray-100">Timestamp:</span> {{ (block.timestamp | to_wib).strftime('%d %B %Y, %H:%M:%S') }} WIB</p>
+                <p><span class="font-semibold text-gray-100">Proof:</span> {{ block.proof }}</p>
+                <p><span class="font-semibold text-gray-100">Previous Hash:</span> {{ block.previous_hash }}</p>
+                <p><span class="font-semibold text-gray-100">Hash Blok Ini:</span> {{ blockchain.hash(block) }}</p>
+            </div>
+
+            <h3 class="text-lg font-semibold text-white mt-6 mb-3">Transaksi ({{ block.transactions|length }})</h3>
+            
+            <!-- Periksa apakah ada transaksi di dalam blok ini. -->
+            {% if block.transactions %}
+            <div class="space-y-4">
+                <!-- Loop melalui setiap transaksi di dalam blok. -->
+                {% for tx in block.transactions %}
+                <div class="bg-black/20 p-4 rounded-lg font-mono">
+                    <p class="text-xs text-pink-400 break-all">ID Transaksi: {{ tx.transaction_id }}</p>
+                    <p class="text-sm"><span class="font-semibold text-gray-100">Dari:</span> <span class="text-red-400 break-all">{{ tx.sender }}</span></p>
+                    <p class="text-sm"><span class="font-semibold text-gray-100">Ke:</span> <span class="text-green-400 break-all">{{ tx.recipient }}</span></p>
+                    <p class="text-sm"><span class="font-semibold text-gray-100">Jumlah:</span> <span class="font-bold text-cyan-400">{{ "{:,.0f}".format(tx.amount) }} Koin</span></p>
+                    <div class="mt-2 pt-2 border-t border-gray-700 text-xs text-gray-400">
+                        <p>Detail Tiket: Event '{{ tx.ticket_details.event_name }}' untuk {{ tx.ticket_details.username }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Tampilkan pesan ini jika tidak ada transaksi (biasanya hanya di Blok Genesis). -->
+            <p class="text-gray-400 text-sm">Tidak ada transaksi di blok ini.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Tampilkan ikon rantai sebagai pemisah antar blok. -->
+        {% if not loop.last %}
+        <div class="flex justify-center my-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.536a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

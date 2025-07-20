@@ -1,0 +1,76 @@
+<!-- D:\jkt48-nft-wallet\app\templates\event_detail.html -->
+<!-- Halaman ini menampilkan detail lengkap dari satu event yang dipilih. -->
+{% extends "base.html" %}
+
+<!-- Mengatur judul halaman secara dinamis berdasarkan nama event. -->
+{% block title %}Detail Event: {{ event.name }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg overflow-hidden">
+        <div class="md:flex">
+            <!-- Kolom Gambar Poster -->
+            <div class="md:w-1/2">
+                <img class="h-64 w-full object-cover md:h-full" src="{{ event.image_url }}" alt="Poster {{ event.name }}" onerror="this.onerror=null;this.src='https://placehold.co/720x800/1f2937/ffffff?text=Image+Not+Found';">
+            </div>
+            
+            <!-- Kolom Detail Informasi & Aksi -->
+            <div class="p-8 md:w-1/2 flex flex-col justify-between">
+                <div>
+                    <!-- Nama Event -->
+                    <h1 class="text-4xl font-extrabold text-white mb-2">{{ event.name }}</h1>
+                    
+                    <!-- Tanggal & Waktu Event -->
+                    <p class="text-lg text-pink-400 font-semibold mb-4">{{ event.date.strftime('%A, %d %B %Y @ %H:%M') }} WIB</p>
+                    
+                    <!-- Lokasi / Venue -->
+                    <div class="flex items-center text-gray-300 mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
+                        <span>{{ event.venue }}</span>
+                    </div>
+
+                    <!-- Deskripsi Event -->
+                    <h2 class="text-xl font-bold text-white mb-2">Deskripsi Event</h2>
+                    <p class="text-gray-300 leading-relaxed mb-6">{{ event.description }}</p>
+
+                    <!-- Info Harga & Ketersediaan Tiket -->
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div class="bg-white/10 p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">Harga Tiket</p>
+                            <p class="text-2xl font-bold text-white">{{ "{:,.0f}".format(event.ticket_price) }} Koin</p>
+                        </div>
+                        <div class="bg-white/10 p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">Tiket Tersedia</p>
+                            <p class="text-2xl font-bold text-white">{{ event.tickets_available }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tombol Aksi Pembelian (Dinamis) -->
+                <div class="mt-8">
+                    {% if current_user.is_authenticated %}
+                        {% if event.tickets_available > 0 %}
+                            <!-- Jika user login & tiket ada, tampilkan tombol beli. -->
+                            <form method="POST" action="{{ url_for('main.buy_ticket', event_id=event.id) }}">
+                                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-6 rounded-lg text-lg transition duration-300 shadow-lg hover:shadow-pink-500/50">
+                                    Beli Tiket Sekarang
+                                </button>
+                            </form>
+                        {% else %}
+                            <!-- Jika tiket habis, tampilkan tombol nonaktif. -->
+                            <button class="w-full bg-gray-600 text-gray-400 font-bold py-4 px-6 rounded-lg cursor-not-allowed">
+                                Tiket Habis Terjual
+                            </button>
+                        {% endif %}
+                    {% else %}
+                        <!-- Jika user belum login, arahkan ke halaman login. -->
+                        <a href="{{ url_for('auth.login', next=request.url) }}" class="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg text-lg transition duration-300">
+                            Login untuk Membeli Tiket
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

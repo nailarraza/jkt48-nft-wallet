@@ -1,0 +1,43 @@
+<!-- D:\jkt48-nft-wallet\app\templates\login.html -->
+<!-- Halaman ini berisi formulir untuk login pengguna. -->
+{% extends "base.html" %}
+
+<!-- Mengatur judul spesifik untuk halaman login. -->
+{% block title %}Login - JKT48 NFT Ticketing{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center pt-10 pb-10">
+    <!-- Kontainer form dengan efek blur pada background. -->
+    <div class="w-full max-w-md p-8 space-y-6 bg-white/10 backdrop-blur-lg rounded-xl shadow-lg">
+        <br>
+        <h2 class="text-3xl font-bold text-center text-white">Login ke Akun Anda</h2>
+        
+        <!-- Formulir login. Action mengarah ke rute 'auth.login'. -->
+        <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-6">
+            <!-- CSRF Protection (jika menggunakan Flask-WTF). -->
+            {{ form.hidden_tag() if form }} 
+            
+            <!-- Input untuk Email -->
+             <br>
+            <div>
+                <label for="identifier" class="block mb-2 text-sm font-medium text-gray-200">Username atau Email</label>
+                <input type="text" name="identifier" id="identifier" class="w-full px-4 py-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder="Username atau email Anda" required>
+            </div>
+            
+            <!-- Input untuk Password -->
+            <div>
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-200">Password</label>
+                <input type="password" name="password" id="password" placeholder="••••••••" class="w-full px-4 py-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+            </div>
+            
+            <!-- Tombol Submit -->
+            <button type="submit" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-pink-500 rounded-lg hover:bg-pink-600 focus:ring-4 focus:ring-pink-300">Login</button>
+            <br>
+            <!-- Link untuk ke halaman Registrasi jika belum punya akun -->
+            <div class="text-sm font-medium text-center text-gray-300">
+                Belum punya akun? <a href="{{ url_for('auth.register') }}" class="text-pink-400 hover:underline">Register disini</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

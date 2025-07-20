@@ -1,0 +1,42 @@
+<!-- D:\jkt48-nft-wallet\app\templates\wallet.html -->
+<!-- Halaman ini menampilkan informasi dompet digital milik pengguna yang sedang login. -->
+{% extends "base.html" %}
+
+<!-- Mengatur judul spesifik untuk halaman ini. -->
+{% block title %}Dompet Saya{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 md:p-8 text-white">
+    <h1 class="text-3xl font-bold text-center mb-6">Informasi Dompet Digital</h1>
+    
+    <div class="bg-white/10 p-6 rounded-lg space-y-4">
+        <!-- Informasi Pemilik -->
+        <div>
+            <label class="text-sm text-gray-400">Pemilik</label>
+            <p class="text-xl font-semibold">{{ user.username }}</p>
+        </div>
+        
+        <!-- Informasi Saldo -->
+        <div>
+            <label class="text-sm text-gray-400">Saldo Saat Ini</label>
+            <!-- Format saldo dengan pemisah ribuan dan 2 angka desimal. -->
+            <p class="text-4xl font-bold text-pink-400">{{ "{:,.2f}".format(user.wallet.balance) }} <span class="text-2xl">JKT48 Koin</span></p>
+        </div>
+        
+        <!-- Kunci Publik (Alamat Dompet) -->
+         <br>
+        <div>
+            <label class="text-sm text-gray-1000 font-bold">Alamat Publik (Public Key) :</label>
+            <p class="text-sm font-mono break-all bg-gray-900/50 p-2 rounded">{{ user.wallet.public_key }}</p>
+            <small class="text-gray-1000">Ini adalah "nomor rekening" Anda. Aman untuk dibagikan kepada orang lain untuk menerima aset.</small>
+        </div>
+        
+        <!-- Kunci Privat (Sangat Rahasia) -->
+        <div class="border-t border-gray-600 pt-4">
+             <label class="text-sm text-gray-1000 font-bold">Kunci Privat (Private Key) :</label>
+             <p class="text-sm font-mono break-all bg-gray-900/50 p-2 rounded">{{ user.wallet.private_key }}</p>
+             <small class="text-red-600 font-semibold">PERHATIAN: JANGAN PERNAH bagikan kunci ini kepada siapa pun! Ini adalah akses penuh ke dompet Anda.</small>
+        </div>
+    </div>
+</div>
+{% endblock %}

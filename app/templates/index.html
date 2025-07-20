@@ -1,0 +1,125 @@
+<!-- D:\jkt48-nft-wallet\app\templates\index.html -->
+<!-- Ini adalah halaman utama (homepage) aplikasi. -->
+<!-- Ia mewarisi dari base.html dan mengisi blok 'content'-nya. -->
+{% extends "base.html" %}
+
+<!-- Mengatur judul spesifik untuk halaman ini. -->
+{% block title %}Home - Selamat Datang{% endblock %}
+
+{% block content %}
+<!-- Bagian Header / Hero Section -->
+ <br>
+<div class="text-center pt-12 pb-16">
+    <h1 class="text-5xl font-extrabold drop-shadow-lg">
+        <span class="text-white">Selamat Datang di</span> <span class="text-pink-400">JKT48 NFT Ticketing</span>
+    </h1>
+    <p class="text-xl text-gray-300 mt-4">Platform terpercaya untuk semua event JKT48.</p>
+    <br>
+    
+    <!-- Tampilkan pesan sapaan jika pengguna sudah login -->
+    {% if current_user.is_authenticated %}
+        <p class="text-2xl text-pink-400 mt-8"> <span class="text-2xl text-white mt-8">Halo,</span> <b>{{ current_user.username }}</b>! <span class="text-2xl text-white mt-8">Siap bertemu Oshi di event yang kamu inginkan ?</span></p>
+    <!-- Jika belum, tampilkan tombol ajakan untuk mendaftar -->
+    {% else %}
+        <div class="mt-8">
+            <a href="{{ url_for('auth.register') }}" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300">Mulai Sekarang</a>
+        </div>
+    {% endif %}
+</div>
+<br><br>
+<!-- Bagian Daftar Event -->
+<div class="px-4 md:px-0">
+    <h2 class="text-3xl font-bold text-center text-white mb-8">Event Mendatang</h2>
+    
+    <!-- Periksa apakah ada event yang dikirim dari backend -->
+    {% if events %}
+    <!-- Jika ada, buat grid untuk menampilkannya -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Loop melalui setiap objek 'event' -->
+        {% for event in events %}
+        <!-- Setiap kartu event adalah link ke halaman detailnya -->
+        <a href="{{ url_for('main.event_detail', event_id=event.id) }}" class="block group">
+            <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg overflow-hidden h-full flex flex-col transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-pink-500/30">
+                <!-- Gambar Poster Event -->
+                <!-- onerror digunakan sebagai fallback jika gambar gagal dimuat. -->
+                <img class="w-full h-56 object-cover" src="{{ event.image_url }}" alt="Poster {{ event.name }}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1f2937/ffffff?text=Image+Not+Found';">
+                
+                <!-- Konten Kartu Event -->
+                <div class="p-6 flex flex-col flex-grow">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-2">{{ event.name }}</h3>
+                        <!-- Format tanggal dan waktu agar mudah dibaca -->
+                        <p class="text-pink-400 font-semibold mb-2">{{ event.date.strftime('%A, %d %B %Y - %H:%M') }} WIB</p>
+                        <p class="text-gray-300 mb-4">{{ event.venue }}</p>
+                    </div>
+                    <!-- Bagian bawah kartu, disejajarkan ke bawah menggunakan mt-auto -->
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-center">
+                            <!-- Memperbaiki tampilan harga agar sesuai dengan model data yang baru -->
+                            <span class="text-xl font-bold text-white">{{ "{:,.0f}".format(event.ticket_price) }} Koin</span>
+                            <span class="bg-pink-500 text-white text-xs font-semibold px-3 py-1 rounded-full">Lihat Detail</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Jika tidak ada event, tampilkan pesan ini -->
+    <div class="text-center text-gray-400 bg-white/10 backdrop-blur-lg rounded-xl p-12">
+        <h3 class="text-2xl">Yah... Belum Ada Event Mendatang</h3>
+        <p>Silakan cek kembali nanti atau minta admin untuk menambahkan event baru!</p>
+    </div>
+    {% endif %}
+</div>
+<br><br>
+<!-- Bagian Penjelasan: Kenapa Tiket NFT? -->
+<div class="mt-24 mb-16 px-4 md:px-0">
+    <h2 class="text-3xl font-bold text-center text-white mb-4">Kenapa Tiket NFT?</h2>
+    <p class="text-lg text-center text-gray-300 mb-12">Memanfaatkan teknologi blockchain untuk pengalaman ticketing yang lebih aman, adil, dan transparan.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Kartu 1: Anti-Pemalsuan -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-8 text-center flex flex-col">
+            <div class="flex-grow">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-pink-500/20 rounded-full p-4 inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-3">Anti-Pemalsuan</h3>
+                <p class="text-gray-300">Setiap tiket adalah token unik (NFT) yang tercatat di blockchain. ID uniknya tidak dapat digandakan atau dipalsukan, menjamin keaslian setiap tiket.</p>
+            </div>
+        </div>
+
+        <!-- Kartu 2: Kepemilikan Terverifikasi -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-8 text-center flex flex-col">
+            <div class="flex-grow">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-cyan-500/20 rounded-full p-4 inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H5v-2H3v-2H1v-4a6 6 0 016-6h4a6 6 0 016 6z" /></svg>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-3">Kepemilikan Terverifikasi</h3>
+                <p class="text-gray-300">Tiket terhubung secara kriptografis ke dompet digital Anda. Hanya Anda yang memiliki kunci privat yang dapat mengakses dan menggunakan tiket tersebut.</p>
+            </div>
+        </div>
+
+        <!-- Kartu 3: Transparansi Penuh -->
+        <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-8 text-center flex flex-col">
+            <div class="flex-grow">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-green-500/20 rounded-full p-4 inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-3">Transparansi Penuh</h3>
+                <p class="text-gray-300">Semua riwayat pembelian dan kepemilikan tiket tercatat permanen di buku besar publik. Ini mencegah praktik calo dan memastikan keadilan bagi semua fans.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

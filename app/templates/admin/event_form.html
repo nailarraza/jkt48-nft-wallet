@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit Event' if event else 'Tambah Event Baru' }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-white mb-6">{{ 'Edit Event' if event else 'Tambah Event Baru' }}</h1>
+
+    <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-8">
+        <form method="POST" action="{{ url_for('admin.edit_event', event_id=event.id) if event else url_for('admin.add_event') }}">
+            
+            <!-- Nama Event -->
+            <div class="mb-4">
+                <label for="name" class="block text-white text-sm font-bold mb-2">Nama Event</label>
+                <input type="text" id="name" name="name" value="{{ event.name or '' }}" class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded focus:outline-none focus:shadow-outline" required>
+            </div>
+
+            <!-- Deskripsi -->
+            <div class="mb-4">
+                <label for="description" class="block text-white text-sm font-bold mb-2">Deskripsi</label>
+                <textarea id="description" name="description" rows="4" class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded focus:outline-none focus:shadow-outline" required>{{ event.description or '' }}</textarea>
+            </div>
+
+            <!-- Tanggal dan Waktu -->
+            <div class="mb-4">
+                <label for="date" class="block text-white text-sm font-bold mb-2">Tanggal & Waktu</label>
+                <input type="datetime-local" id="date" name="date" value="{{ event.date.strftime('%Y-%m-%dT%H:%M') if event else '' }}" class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded focus:outline-none focus:shadow-outline" required>
+            </div>
+
+            <!-- Venue -->
+            <div class="mb-4">
+                <label for="venue" class="block text-white text-sm font-bold mb-2">Venue</label>
+                <input type="text" id="venue" name="venue" value="{{ event.venue or '' }}" class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded focus:outline-none focus:shadow-outline" required>
+            </div>
+
+            <!-- URL Gambar -->
+            <div class="mb-6">
+                <label for="image_url" class="block text-white text-sm font-bold mb-2">URL Gambar Poster</label>
+                <input type="url" id="image_url" name="image_url" value="{{ event.image_url or '' }}" class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded focus:outline-none focus:shadow-outline" required>
+            </div>
+
+            <!-- Harga dan Ketersediaan Tiket (Sederhana) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="ticket_price" class="block text-white text-sm font-bold mb-2">Harga Tiket (Koin)</label>
+                    <input type="number" step="1" id="ticket_price" name="ticket_price" value="{{ event.ticket_price or '' }}" class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div>
+                    <label for="tickets_available" class="block text-white text-sm font-bold mb-2">Jumlah Tiket Tersedia</label>
+                    <input type="number" step="1" id="tickets_available" name="tickets_available" value="{{ event.tickets_available or '' }}" class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded focus:outline-none focus:shadow-outline" required>
+                </div>
+            </div>
+
+            <!-- Tombol Submit -->
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    {{ 'Simpan Perubahan' if event else 'Tambah Event' }}
+                </button>
+                <a href="{{ url_for('admin.dashboard') }}" class="inline-block align-baseline font-bold text-sm text-blue-400 hover:text-blue-200">
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

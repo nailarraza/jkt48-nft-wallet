@@ -1,0 +1,87 @@
+<!-- D:\jkt48-nft-wallet\app\templates\base.html -->
+<!-- Ini adalah template dasar yang akan diwarisi oleh semua halaman lain. -->
+<!-- Tujuannya adalah untuk menghindari duplikasi kode pada bagian-bagian yang sama, -->
+<!-- seperti <head>, navbar, dan footer. -->
+
+<!DOCTYPE html>
+<html lang="id"> <!-- Menggunakan bahasa Indonesia -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Judul halaman akan dinamis, diisi oleh blok 'title' dari template anak. -->
+    <title>{% block title %}JKT48 NFT Ticketing{% endblock %}</title>
+    
+    <!-- Memuat Tailwind CSS dari CDN untuk styling. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memuat Google Fonts: Poppins untuk tipografi yang modern. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Kustomisasi CSS internal. -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            position: relative; /* Diperlukan agar pseudo-element bisa diposisikan relatif terhadap body. */
+        }
+
+        /* Membuat pseudo-element ::before untuk dijadikan lapisan latar belakang. */
+        body::before {
+            content: '';
+            position: fixed; /* Tetap di posisi yang sama bahkan saat di-scroll. */
+            top: 0;
+            left: 0;
+            width: 100vw; /* Lebar penuh viewport. */
+            height: 100vh; /* Tinggi penuh viewport. */
+            z-index: -1; /* Meletakkannya di belakang semua konten lain. */
+
+            /* Properti untuk gambar latar belakang dipindahkan ke sini. */
+            background-image: url("{{ url_for('static', filename='img/wpp-con.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            
+            /* Menerapkan efek blur. Anda bisa mengubah nilai 5px sesuai selera. */
+            filter: blur(2.5px);
+            transform: scale(1.05); /* Sedikit zoom untuk menyembunyikan tepi blur yang terkadang muncul. */
+        }
+    </style>
+</head>
+<body class="text-white flex flex-col min-h-screen"> <!-- Menghapus bg-gray-900 agar background transparan dan gambar terlihat -->
+    
+    {% include 'partials/_navbar.html' %}
+
+    <!-- Konten utama halaman. `flex-grow` akan mendorong footer ke bawah. -->
+    <main class="pt-20 flex-grow"> 
+        <div class="container mx-auto px-4 py-8">
+            
+            <!-- Blok untuk menampilkan pesan flash (notifikasi). -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <!-- Styling notifikasi berdasarkan kategori (e.g., 'success', 'danger'). -->
+                        <div class="p-4 mb-4 text-sm rounded-lg 
+                                    {% if category == 'success' %} text-green-800 bg-green-200 
+                                    {% elif category == 'danger' %} text-red-800 bg-red-200
+                                    {% else %} text-blue-800 bg-blue-200 {% endif %}" 
+                             role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Blok 'content' ini adalah tempat di mana konten unik dari setiap halaman anak akan disisipkan. -->
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    <!-- Menyertakan file footer.html yang baru dibuat. -->
+    {% include 'partials/_footer.html' %}
+
+    <!-- Memuat JavaScript dari Flowbite untuk komponen interaktif seperti dropdown dan modal. -->
+    <!-- Ini dibutuhkan agar navbar mobile bisa berfungsi. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+</body>
+</html>

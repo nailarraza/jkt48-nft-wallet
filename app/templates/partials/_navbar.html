@@ -1,0 +1,60 @@
+<!-- D:\jkt48-nft-wallet\app\templates\partials\_navbar.html -->
+<!-- File ini berisi komponen navbar yang akan disertakan di template dasar. -->
+<!-- Memisahkannya membuat kode lebih rapi dan mudah dikelola. -->
+
+<nav class="bg-white/10 backdrop-blur-md shadow-lg fixed w-full z-20 top-0 start-0 border-b border-gray-200/20">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <!-- Logo / Nama Aplikasi -->
+        <a href="{{ url_for('main.index') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
+            <img src="{{ url_for('static', filename='jkt48-logo.png') }}" class="h-8" alt="JKT48 NFT-Tix Logo">
+            <span class="self-center text-2xl font-semibold whitespace-nowrap text-white drop-shadow-lg">JKT48 NFT-Tix</span>
+        </a>
+        
+        <!-- Tombol Aksi Kanan (Login/Logout) & Tombol Menu Mobile -->
+        <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+            <!-- Logika kondisional: Tampilkan tombol Logout jika pengguna sudah login, -->
+            <!-- sebaliknya, tampilkan tombol Login dan Register. -->
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('auth.logout') }}" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center">Logout</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="text-gray-800 bg-white hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-2">Login</a>
+                <a href="{{ url_for('auth.register') }}" class="text-white bg-pink-500 hover:bg-pink-600 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm px-4 py-2 text-center">Register</a>
+            {% endif %}
+            
+            <!-- Tombol "hamburger" untuk membuka menu di perangkat mobile. -->
+            <button data-collapse-toggle="navbar-sticky" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-200 rounded-lg md:hidden hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-gray-400" aria-controls="navbar-sticky" aria-expanded="false">
+                <span class="sr-only">Buka menu utama</span>
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Daftar Menu Navigasi -->
+        <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
+            <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100/20 rounded-lg bg-white/5 md:bg-transparent md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
+                <li>
+                    <a href="{{ url_for('main.index') }}" class="block py-2 px-3 text-white rounded hover:bg-white/20 md:hover:bg-transparent md:hover:text-pink-400 md:p-0" aria-current="page">Home</a>
+                </li>
+                <!-- Tampilkan menu ini hanya jika pengguna sudah login -->
+                {% if current_user.is_authenticated %}
+                <li>
+                    <a href="{{ url_for('main.my_tickets') }}" class="block py-2 px-3 text-white rounded hover:bg-white/20 md:hover:bg-transparent md:hover:text-pink-400 md:p-0">Tiket Saya</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('main.wallet_info') }}" class="block py-2 px-3 text-white rounded hover:bg-white/20 md:hover:bg-transparent md:hover:text-pink-400 md:p-0">Dompet Saya</a>
+                </li>
+                <!-- Tampilkan menu ini hanya jika pengguna adalah SuperAdmin -->
+                {% if current_user.role == 'SuperAdmin' %}
+                <li>
+                    <a href="{{ url_for('admin.dashboard') }}" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center">Dashboard</a>
+                </li>
+                {% endif %}
+                {% endif %}
+                <li>
+                    <a href="{{ url_for('main.view_chain') }}" class="block py-2 px-3 text-white rounded hover:bg-white/20 md:hover:bg-transparent md:hover:text-pink-400 md:p-0">Blockchain</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
